@@ -1,0 +1,14 @@
+{
+  "name": "frontend_webpack",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build:dev": "webpack --mode development --watch",
+    "build:prd": "webpack --mode production",
+    "start": "webpack-dev-server --mode development",
+    "eslint": "eslint --fix"
+  },
+  "private": true
+}
