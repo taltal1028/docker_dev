@@ -1,6 +1,6 @@
 FROM node:8.17.0-alpine
 # 作成者
-MAINTAINER taltal
+LABEL maintainer "taltal <taltalsan.1028@gmail.com>"
 # 作業フォルダを指定
 WORKDIR /app
 # webpackに必要なモジュールをインストール

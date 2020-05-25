@@ -1,20 +1,20 @@
 version: '3'
 services:
 
-  api:
-    build: ./api
-    image: node-express:1.0
-    container_name: api
-    tty: true
-    volumes:
-      - ./api/source:/api
-    ports:
-      - 3000:3000
+  # api:
+  #   container_name: api
+  #   image: node-express:1.0
+  #   build: ./api
+  #   tty: true
+  #   volumes:
+  #     - ./api/source:/api
+  #   ports:
+  #     - 3000:3000
 
   webpack:
-    build: ./webpack
-    image: webpack:1.0
     container_name: webpack_container
+    image: webpack:1.0
+    build: ./webpack
     ports:
       - 8000:8000
     volumes:
@@ -25,37 +25,52 @@ services:
       - ./app/dist:/app/dist:z
 
   nginx:
-    build: ./nginx
-    image: nginx:1.0
     container_name: nginx_container
+    image: nginx:1.0
+    build: ./nginx
     ports:
-      - 80:80
+      - 10080:80
       # - 443:443
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
       - ./app/dist:/var/www/develop:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./logs:/var/log/nginx
+    environment:
+      - TZ=${TZ}
     depends_on:
       - php
 
   php:
-    build: ./php
-    image: php-fpm:1.0
     container_name: php-fpm_container
+    image: php-fpm:1.0
+    build: ./php
     env_file: .env
+    args:
+      - TZ=${TZ}
     volumes:
       - ./app/dist:/var/www/develop:ro
     depends_on:
       - db
 
-  db:
-    build: ./mysql
-    image: mysql:1.0
-    user: '1000:50'
-    command: '--innodb_use_native_aio=0'
+  mysql:
     container_name: mysql_container
-    env_file: .env
+    image: mysql:1.0
+    build: ./mysql
+    # user: '1000:50'
+    # command: '--innodb_use_native_aio=0'
     ports:
-      - 3306:3306
+      - 13306:3306
     volumes:
-      - ./mysql/app.cnf:/etc/mysql/conf.d/app.cnf
+      # - db-store:/var/lib/mysql
       - ./mysql/data:/var/lib/mysql
+      - ./logs:/var/log/mysql
+      - ./mysql/app.cnf:/etc/mysql/conf.d/app.cnf
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - TZ=${TZ}
+
+volumes:
+  db-store:

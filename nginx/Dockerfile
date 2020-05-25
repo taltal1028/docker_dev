@@ -1,4 +1,5 @@
 FROM nginx:1.17.6-alpine
+LABEL maintainer "taltal <taltalsan.1028@gmail.com>"
 # ツールをインストール
 # RUN apk --update add openssl
 # ルートディレクトリを作成
